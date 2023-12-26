@@ -19,7 +19,7 @@ public class JwtUtils {
                 .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expiredTimeMs))
-                .signWith(Keys.hmacShaKeyFor(key.getBytes()), SignatureAlgorithm.HS256)
+                .signWith(getSignKey(key), SignatureAlgorithm.HS256)
                 .compact();
         return token;
     }

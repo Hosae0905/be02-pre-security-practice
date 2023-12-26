@@ -39,15 +39,12 @@ public class JwtFilter extends OncePerRequestFilter {
         String username = JwtUtils.getUsername(token, secretKey);
         Member member = memberService.loadUserByUsername(username);
 
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(member.getUsername(), null);
-
-        // 인증 과정 수행 회원 엔티티를 받아온다.
-        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
         if(!JwtUtils.validate(token, member.getUsername(), secretKey)) {
           filterChain.doFilter(request, response);
           return;
         }
+
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(member.getUsername(), null, member.getAuthorities());
 
         // 인가하는 코드를 작성
         SecurityContextHolder.getContext().setAuthentication(authentication);

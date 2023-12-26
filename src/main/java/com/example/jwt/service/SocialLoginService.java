@@ -41,6 +41,8 @@ public class SocialLoginService {
                 Object.class
         );
 
+        System.out.println(response2);
+
         String nickname = "" + response2;
         String username = nickname.split(",")[3].split("nickname=")[1].split("}")[0];
         System.out.println("username = " + username);

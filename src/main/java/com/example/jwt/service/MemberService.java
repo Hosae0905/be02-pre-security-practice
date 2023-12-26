@@ -2,6 +2,7 @@ package com.example.jwt.service;
 
 import com.example.jwt.model.Member;
 import com.example.jwt.model.MemberDto;
+import com.example.jwt.model.MemberLoginReq;
 import com.example.jwt.repository.MemberRepository;
 import com.example.jwt.util.JwtUtils;
 import lombok.RequiredArgsConstructor;
@@ -63,12 +64,13 @@ public class MemberService implements UserDetailsService{
                 .build());
     }
 
-    public String login(String username) {
-        String token = JwtUtils.generateAccessToken(username, secretKey, expiredTimeMs);
-        if(JwtUtils.validate(token, username, secretKey)) {
-            return "ok";
-        } else {
-            return null;
+    public String login(MemberLoginReq memberLoginReq) {
+
+        Member member = memberRepository.findByUsername(memberLoginReq.getUsername()).get();
+        if (passwordEncoder.matches(memberLoginReq.getPassword(), member.getPassword())) {
+            return JwtUtils.generateAccessToken(member.getUsername(), secretKey, expiredTimeMs);
         }
+
+        return null;
     }
 }

@@ -2,6 +2,7 @@ package com.example.jwt.controller;
 
 import com.example.jwt.model.Member;
 import com.example.jwt.model.MemberDto;
+import com.example.jwt.model.MemberLoginReq;
 import com.example.jwt.service.MemberService;
 import com.example.jwt.service.SocialLoginService;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +29,8 @@ public class MemberController {
 
 
     @RequestMapping(method = RequestMethod.GET, value = "/login")
-    public ResponseEntity<Object> login(String username) {
-        String result = memberService.login(username);
+    public ResponseEntity<Object> login(@RequestBody MemberLoginReq memberLoginReq) {
+        String result = memberService.login(memberLoginReq);
         return ResponseEntity.ok().body(result);
     }
 
