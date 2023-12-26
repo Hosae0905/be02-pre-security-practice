@@ -22,8 +22,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private final MemberService memberService;
 
-    @Value("${jwt.secret-key}")
-    private String secretKey;
+    private final String secretKey;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

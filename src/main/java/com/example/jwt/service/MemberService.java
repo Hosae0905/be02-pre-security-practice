@@ -7,10 +7,17 @@ import com.example.jwt.util.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;
 
@@ -38,6 +45,15 @@ public class MemberService implements UserDetailsService{
         return member;
     }
 
+    public Member getMemberByUserName(String userName) {
+        Optional<Member> username = memberRepository.findByUsername(userName);
+
+        if (username.isPresent()) {
+            return username.get();
+        } else {
+            return null;
+        }
+    }
 
     public void signUp(MemberDto memberDto) {
         memberRepository.save(Member.builder()
@@ -47,8 +63,8 @@ public class MemberService implements UserDetailsService{
                 .build());
     }
 
-    public String login(String token, String username) {
-        JwtUtils.generateAccessToken(username, secretKey, expiredTimeMs);
+    public String login(String username) {
+        String token = JwtUtils.generateAccessToken(username, secretKey, expiredTimeMs);
         if(JwtUtils.validate(token, username, secretKey)) {
             return "ok";
         } else {
