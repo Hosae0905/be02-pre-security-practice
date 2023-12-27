@@ -23,7 +23,7 @@ public class MemberController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/create")
     public ResponseEntity<Object> create(@RequestBody MemberDto memberDto) {
-         memberService.signUp(memberDto);
+        memberService.signUp(memberDto);
         return ResponseEntity.ok().body("ok");
     }
 

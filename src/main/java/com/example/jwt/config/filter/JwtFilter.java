@@ -1,14 +1,14 @@
 package com.example.jwt.config.filter;
 
+import com.example.jwt.exception.ApplicationException;
+import com.example.jwt.exception.ErrorCode;
 import com.example.jwt.model.Member;
 import com.example.jwt.service.MemberService;
 import com.example.jwt.util.JwtUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;

@@ -1,5 +1,7 @@
 package com.example.jwt.service;
 
+import com.example.jwt.exception.ApplicationException;
+import com.example.jwt.exception.ErrorCode;
 import com.example.jwt.model.Member;
 import com.example.jwt.model.MemberDto;
 import com.example.jwt.model.MemberLoginReq;
@@ -8,20 +10,12 @@ import com.example.jwt.util.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;
-
 
 @Service
 @Configuration
@@ -40,6 +34,7 @@ public class MemberService implements UserDetailsService{
     public Member loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<Member> name = memberRepository.findByUsername(username);
         Member member = null;
+
         if(name.isPresent()) {
             member = name.get();
         }
@@ -54,9 +49,16 @@ public class MemberService implements UserDetailsService{
         } else {
             return null;
         }
+
+//        return username.orElse(null);
     }
 
     public void signUp(MemberDto memberDto) {
+
+        memberRepository.findByUsername(memberDto.getUsername()).ifPresent(it -> {
+            throw new ApplicationException(ErrorCode.DUPLICATED_USER, String.format("%s는 이미 존재합니다.", memberDto.getUsername()));
+        });
+
         memberRepository.save(Member.builder()
                 .username(memberDto.getUsername())
                 .password(passwordEncoder.encode(memberDto.getPassword()))
@@ -65,12 +67,12 @@ public class MemberService implements UserDetailsService{
     }
 
     public String login(MemberLoginReq memberLoginReq) {
-
         Member member = memberRepository.findByUsername(memberLoginReq.getUsername()).get();
+
         if (passwordEncoder.matches(memberLoginReq.getPassword(), member.getPassword())) {
             return JwtUtils.generateAccessToken(member.getUsername(), secretKey, expiredTimeMs);
+        } else {
+            throw new ApplicationException(ErrorCode.INVALID_PASSWORD);
         }
-
-        return null;
     }
 }
