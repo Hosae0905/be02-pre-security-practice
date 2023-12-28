@@ -1,0 +1,23 @@
+spring:
+  datasource:
+#    url: jdbc:mysql://12.12.12.100/Security
+    url: jdbc:mysql://${DB_ADDR}/${DB_NAME}
+    username: ${DB_USER}
+    password: ${DB_PASS}
+    driver-class-name: ${DB_DRIVER}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+
+jwt:
+  secret-key: ${SECRET_KEY}
+  token:
+    expired-time-ms: ${EX_TIME}
+
+oauth:
+  client_id: ${CLIENT_ID}
